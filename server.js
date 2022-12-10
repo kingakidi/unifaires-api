@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const http = require("http");
 
-const app = require("./app");
+const app = require("./startups/app");
 
 // uncaughtExeption
 // uncaughtPromiseExeption
