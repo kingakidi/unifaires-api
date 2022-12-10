@@ -6,6 +6,7 @@ module.exports = {
     queryInterface.addConstraint("Users", {
       fields: ["permissionId"],
       type: "foreign key",
+      name: "permission_user_constraint",
       references: {
         table: "Permissions",
         field: "id",
@@ -14,11 +15,14 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    queryInterface.removeConstraint("Users", {
+      fields: ["permissionId"],
+      type: "foreign key",
+      name: "permission_user_constraint",
+      references: {
+        table: "Permissions",
+        field: "id",
+      },
+    });
   },
 };
