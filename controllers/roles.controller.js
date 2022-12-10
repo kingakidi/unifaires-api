@@ -45,6 +45,60 @@ exports.store = async function (req, res) {
   }
 };
 
+exports.destroy = async function (req, res) {
+  try {
+    const { id } = req.params;
+
+    const role = await Role.findOne({ where: { id: id } });
+    if (role) {
+      await role.destroy().then((result) => {
+        return res.status(204).send({
+          status: "success",
+          message: "Role deleted successfully",
+          data: null,
+        });
+      });
+    }
+    return res.status(400).send({
+      status: "failed",
+      message: "Invalid Role",
+    });
+  } catch (e) {
+    next();
+  }
+};
+
+exports.update = async function (req, res, next) {
+  // Validate and check if the roles have already exist
+  try {
+    let { id } = req.params;
+    let { title, description } = req.body;
+    const data = {
+      title,
+      description,
+      updatedAt: new Date(),
+    };
+
+    // check if the role actually exist
+    const role = await Role.findOne({ where: { id: id } });
+    if (role) {
+      await Role.update(data, { where: { id: id } }).then((result) => {
+        return res.status(200).send({
+          status: "success",
+          message: "Role updated successfully",
+        });
+      });
+    }
+
+    return res.status(400).send({
+      status: "failed",
+      message: "Invalid role id",
+    });
+  } catch (e) {
+    next();
+  }
+};
+
 exports.roleById = async function (req, res) {
   try {
     let { id } = req.params;
