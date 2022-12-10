@@ -1,5 +1,4 @@
 const Validator = require("fastest-validator");
-const models = require("../models");
 
 exports.signup = async (req, res, next) => {
   const schema = {

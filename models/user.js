@@ -1,6 +1,7 @@
-"use strict";
-const { number } = require("joi");
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -12,14 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  User.init(
-    {
+  User.init({
+    
       id: {
         primaryKey: true,
-        type: number,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         unique: true,
       },
+
+      
 
       fullname: {
         type: DataTypes.STRING,
@@ -41,22 +44,10 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       imageUrl: DataTypes.STRING,
-
-      createdAt: {
-        type: "TIMESTAMP",
-
-        allowNull: true,
-      },
-      updatedAt: {
-        type: "TIMESTAMP",
-
-        allowNull: true,
-      },
-    },
-    {
-      sequelize,
-      modelName: "User",
-    }
-  );
+    
+  }, {
+    sequelize,
+    modelName: 'User',
+  });
   return User;
 };
