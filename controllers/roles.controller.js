@@ -82,7 +82,7 @@ exports.destroy = async function (req, res) {
 
     const role = await Role.findOne({ where: { id: id } });
     if (role) {
-      await role.destroy().then((result) => {
+      return await role.destroy().then((result) => {
         return res.status(204).send({
           status: "success",
           message: "Role deleted successfully",

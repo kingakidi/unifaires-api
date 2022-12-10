@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      permissionId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       isEmailVerify: { type: DataTypes.BOOLEAN, defaultValue: false },
       status: {
         type: DataTypes.BOOLEAN,
