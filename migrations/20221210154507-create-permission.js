@@ -12,10 +12,12 @@ module.exports = {
 
       roleId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       title: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       meta: {
         type: Sequelize.TEXT,

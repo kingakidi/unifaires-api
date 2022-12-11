@@ -1,7 +1,7 @@
 const { Role } = require("../models");
 
 // Validations and Authentication middleware
-exports.index = async function (req, res) {
+exports.index = async function (req, res, next) {
   try {
     let roles = await Role.findAll();
     return res.status(200).send({
@@ -9,11 +9,7 @@ exports.index = async function (req, res) {
       data: roles,
     });
   } catch (e) {
-    return res.status(500).send({
-      error: true,
-      data: null,
-      message: e.message,
-    });
+    next(e);
   }
 };
 exports.update = async function (req, res, next) {
@@ -43,11 +39,11 @@ exports.update = async function (req, res, next) {
       message: "Invalid role id",
     });
   } catch (e) {
-    next();
+    next(e);
   }
 };
 
-exports.store = async function (req, res) {
+exports.store = async function (req, res, next) {
   // Save the values into the database
 
   try {
@@ -68,15 +64,11 @@ exports.store = async function (req, res) {
       });
     });
   } catch (e) {
-    return res.status(500).send({
-      error: true,
-      data: null,
-      message: e.message,
-    });
+    next(e);
   }
 };
 
-exports.destroy = async function (req, res) {
+exports.destroy = async function (req, res, next) {
   try {
     const { id } = req.params;
 
@@ -95,11 +87,11 @@ exports.destroy = async function (req, res) {
       message: "Invalid Role",
     });
   } catch (e) {
-    next();
+    next(e);
   }
 };
 
-exports.roleById = async function (req, res) {
+exports.roleById = async function (req, res, next) {
   try {
     let { id } = req.params;
     await Role.findOne({ where: { id: id } }).then((result) => {
@@ -117,15 +109,11 @@ exports.roleById = async function (req, res) {
       });
     });
   } catch (e) {
-    return res.status(500).send({
-      error: true,
-      data: null,
-      message: e.message,
-    });
+    next(e);
   }
 };
 
-exports.roleByTitle = async function (req, res) {
+exports.roleByTitle = async function (req, res, next) {
   try {
     let { title } = req.params;
     await Role.findOne({ where: { title: title } }).then((result) => {
@@ -143,10 +131,6 @@ exports.roleByTitle = async function (req, res) {
       });
     });
   } catch (e) {
-    return res.status(500).send({
-      error: true,
-      data: null,
-      message: e.message,
-    });
+    next(e);
   }
 };

@@ -9,5 +9,4 @@ require("./routes")(app);
 // uncaughtExeption
 // uncaughtPromiseExeption
 // logger
-
 module.exports = app;

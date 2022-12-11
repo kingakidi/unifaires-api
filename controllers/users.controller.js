@@ -1,6 +1,6 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
-exports.index = async function (req, res) {
+exports.index = async function (req, res, next) {
   try {
     let users = await User.findAll();
     return res.status(200).json({
@@ -8,11 +8,7 @@ exports.index = async function (req, res) {
       data: users,
     });
   } catch (e) {
-    return res.status(500).send({
-      error: true,
-      data: null,
-      message: e.message,
-    });
+    next(e);
   }
 };
 
@@ -69,11 +65,7 @@ exports.store = async function (req, res, next) {
       }
     });
   } catch (e) {
-    return res.status(500).send({
-      error: true,
-      data: null,
-      message: e.message,
-    });
+    next(e);
   }
 };
 
@@ -103,7 +95,7 @@ exports.update = async function (req, res, next) {
       data: null,
     });
   } catch (e) {
-    next();
+    next(e);
   }
 };
 
@@ -126,7 +118,7 @@ exports.destroy = async function (req, res, next) {
       message: "Invalid User id",
     });
   } catch (e) {
-    next();
+    next(e);
   }
 };
 
