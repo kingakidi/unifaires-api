@@ -45,12 +45,21 @@ exports.store = async function (req, res, next) {
     description: description,
   };
 
-  await Role.create(data).then((result) => {
-    return res.status(201).send({
-      status: "success",
-      message: "Role Created Successfully",
-      data: result,
+  // check if title already exist
+  let titleCheck = await Role.findOne({ where: { title: title } });
+
+  if (!titleCheck)
+    return await Role.create(data).then((result) => {
+      return res.status(201).send({
+        status: "success",
+        message: "Role Created Successfully",
+        data: result,
+      });
     });
+  return res.status(400).send({
+    status: "failed",
+    message: "Role already exist",
+    data: null,
   });
 };
 
