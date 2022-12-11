@@ -2,135 +2,112 @@ const { Role } = require("../models");
 
 // Validations and Authentication middleware
 exports.index = async function (req, res, next) {
-  try {
-    let roles = await Role.findAll();
-    return res.status(200).send({
-      message: "Roles Fetch Successfully",
-      data: roles,
-    });
-  } catch (e) {
-    next(e);
-  }
+  let roles = await Role.findAll();
+  return res.status(200).send({
+    message: "Roles Fetch Successfully",
+    data: roles,
+  });
 };
 exports.update = async function (req, res, next) {
   // Validate and check if the roles have already exist
-  try {
-    let { id } = req.params;
-    let { title, description } = req.body;
-    const data = {
-      title,
-      description,
-      updatedAt: new Date(),
-    };
 
-    // check if the role actually exist
-    const role = await Role.findOne({ where: { id: id } });
-    if (role) {
-      await Role.update(data, { where: { id: id } }).then((result) => {
-        return res.status(200).send({
-          status: "success",
-          message: "Role updated successfully",
-        });
+  let { id } = req.params;
+  let { title, description } = req.body;
+  const data = {
+    title,
+    description,
+    updatedAt: new Date(),
+  };
+
+  // check if the role actually exist
+  const role = await Role.findOne({ where: { id: id } });
+  if (role) {
+    await Role.update(data, { where: { id: id } }).then((result) => {
+      return res.status(200).send({
+        status: "success",
+        message: "Role updated successfully",
       });
-    }
-
-    return res.status(400).send({
-      status: "failed",
-      message: "Invalid role id",
     });
-  } catch (e) {
-    next(e);
   }
+
+  return res.status(400).send({
+    status: "failed",
+    message: "Invalid role id",
+  });
 };
 
 exports.store = async function (req, res, next) {
   // Save the values into the database
 
-  try {
-    const { title, description } = req.body;
+  const { title, description } = req.body;
 
-    const data = {
-      title: title,
-      description: description,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  const data = {
+    title: title,
+    description: description,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 
-    await Role.create(data).then((result) => {
-      return res.status(201).send({
-        status: "success",
-        message: "Role Created Successfully",
-        data: result,
-      });
+  await Role.create(data).then((result) => {
+    return res.status(201).send({
+      status: "success",
+      message: "Role Created Successfully",
+      data: result,
     });
-  } catch (e) {
-    next(e);
-  }
+  });
 };
 
 exports.destroy = async function (req, res, next) {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const role = await Role.findOne({ where: { id: id } });
-    if (role) {
-      return await role.destroy().then((result) => {
-        return res.status(204).send({
-          status: "success",
-          message: "Role deleted successfully",
-          data: null,
-        });
+  const role = await Role.findOne({ where: { id: id } });
+  if (role) {
+    return await role.destroy().then((result) => {
+      return res.status(204).send({
+        status: "success",
+        message: "Role deleted successfully",
+        data: null,
       });
-    }
-    return res.status(400).send({
-      status: "failed",
-      message: "Invalid Role",
     });
-  } catch (e) {
-    next(e);
   }
+  return res.status(400).send({
+    status: "failed",
+    message: "Invalid Role",
+  });
 };
 
 exports.roleById = async function (req, res, next) {
-  try {
-    let { id } = req.params;
-    await Role.findOne({ where: { id: id } }).then((result) => {
-      if (result)
-        return res.status(200).send({
-          status: "success",
-          message: "Role fetch successfully",
-          data: result,
-        });
-
+  let { id } = req.params;
+  await Role.findOne({ where: { id: id } }).then((result) => {
+    if (result)
       return res.status(200).send({
         status: "success",
-        message: "Roles does not exit",
-        data: null,
+        message: "Role fetch successfully",
+        data: result,
       });
+
+    return res.status(200).send({
+      status: "success",
+      message: "Roles does not exit",
+      data: null,
     });
-  } catch (e) {
-    next(e);
-  }
+  });
 };
 
 exports.roleByTitle = async function (req, res, next) {
-  try {
-    let { title } = req.params;
-    await Role.findOne({ where: { title: title } }).then((result) => {
-      if (result)
-        return res.status(200).send({
-          status: "success",
-          message: "Roles Fetch successfully",
-          data: result,
-        });
-
+  let { title } = req.params;
+  await Role.findOne({ where: { title: title } }).then((result) => {
+    if (result)
       return res.status(200).send({
         status: "success",
-        message: "Roles does not exit",
-        data: null,
+        message: "Roles Fetch successfully",
+        data: result,
       });
+
+    return res.status(200).send({
+      status: "success",
+      message: "Roles does not exit",
+      data: null,
     });
-  } catch (e) {
-    next(e);
-  }
+  });
 };
