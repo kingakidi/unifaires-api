@@ -16,7 +16,6 @@ exports.update = async function (req, res, next) {
   const data = {
     title,
     description,
-    updatedAt: new Date(),
   };
 
   // check if the role actually exist
@@ -44,8 +43,6 @@ exports.store = async function (req, res, next) {
   const data = {
     title: title,
     description: description,
-    createdAt: new Date(),
-    updatedAt: new Date(),
   };
 
   await Role.create(data).then((result) => {

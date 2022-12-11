@@ -35,9 +35,7 @@ exports.store = async function (req, res, next) {
           .then((result) => {
             // trigger email event
 
-            const {
-              dataValues: { fullname, email, imageUrl, createdAt, updatedAt },
-            } = result;
+            const { fullname, email, imageUrl, createdAt, updatedAt } = result;
             res.status(201).send({
               status: "success",
               message: "User Created Successfully",
