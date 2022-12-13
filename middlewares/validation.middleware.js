@@ -86,7 +86,7 @@ exports.add_permissions = async (req, res, next) => {
       optional: false,
     },
     roleId: {
-      type: "number",
+      type: "string",
       optional: false,
       positive: true,
       integer: true,
@@ -119,6 +119,38 @@ exports.add_permissions = async (req, res, next) => {
         data: null,
       });
 
+    next();
+  }
+};
+
+exports.login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const data = {
+    email,
+    password,
+  };
+  const schema = {
+    email: {
+      type: "email",
+      optional: false,
+    },
+
+    password: {
+      type: "string",
+      optional: false,
+    },
+  };
+
+  const error = await v.validate(data, schema);
+
+  if (error.length > 0) {
+    return res.status(400).send({
+      status: "failed",
+      message: "validation failed",
+      error: error,
+    });
+  } else {
     next();
   }
 };

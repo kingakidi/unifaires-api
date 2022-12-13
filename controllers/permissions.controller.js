@@ -10,12 +10,12 @@ exports.index = async function (req, res, next) {
   });
 };
 exports.store = async function (req, res, next) {
-  let { title, meta, description } = req.body;
+  let { title, meta, description, roleId } = req.body;
   let data = {
     title,
     meta,
     description,
-    roleId: 8,
+    roleId: roleId,
   };
 
   await Permission.create(data).then((result) => {

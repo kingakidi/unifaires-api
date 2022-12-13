@@ -1,5 +1,5 @@
 const { User } = require("../models");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 exports.index = async function (req, res, next) {
   let users = await User.findAll();
@@ -10,7 +10,7 @@ exports.index = async function (req, res, next) {
 };
 
 exports.store = async function (req, res, next) {
-  let { fullname, email, password, imageUrl } = req.body;
+  let { fullname, email, password, imageUrl, permissionId } = req.body;
 
   const hashPassword = await bcrypt.hash(password, 10);
   const user = {
@@ -18,7 +18,7 @@ exports.store = async function (req, res, next) {
     email: email,
     password: hashPassword,
     imageUrl: imageUrl,
-    permissionId: 1,
+    permissionId: permissionId,
   };
 
   // check email
