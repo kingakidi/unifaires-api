@@ -1,13 +1,22 @@
-const validation = require("../middlewares/validation.middleware");
-const user_controller = require("../controllers/users.controller");
-const try_catch = require("../middlewares/trycatch");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", try_catch(user_controller.index));
-router.post("/", validation.signup, try_catch(user_controller.store));
+const { signup } = require("../middlewares/validation.middleware");
+const {
+  index,
+  store,
+  update,
+  destroy,
+} = require("../controllers/users.controller");
 
-router.put("/:id", try_catch(user_controller.update));
-router.delete("/:id", try_catch(user_controller.destroy));
+const try_catch = require("../middlewares/trycatch");
+
+const { isLogin, isAdmin } = require("../middlewares/auth.middlewares");
+
+router.get("/", [isLogin, isAdmin], try_catch(index));
+router.post("/", [isLogin, isAdmin], try_catch(store));
+
+router.put("/:id", [isLogin, isAdmin], try_catch(update));
+router.delete("/:id", [isLogin, isAdmin], try_catch(destroy));
 
 module.exports = router;

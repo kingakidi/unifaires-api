@@ -10,7 +10,7 @@ exports.login = async function (req, res) {
   if (!user)
     return res.status(404).send({
       status: "failed",
-      message: "Invalid login credentials",
+      message: "Invalid email address",
     });
 
   // isActive Account

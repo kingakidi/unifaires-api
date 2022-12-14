@@ -1,19 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const role_controller = require("../controllers/roles.controller");
-const validate_middleware = require("../middlewares/validation.middleware");
+const {
+  index,
+  store,
+  update,
+  destroy,
+  roleById,
+  roleByTitle,
+} = require("../controllers/roles.controller");
+const { isLogin, isAdmin } = require("../middlewares/auth.middlewares");
+
+const { add_role } = require("../middlewares/validation.middleware");
 const try_catch = require("../middlewares/trycatch");
 
-router.get("/", try_catch(role_controller.index));
-router.post(
-  "/",
-  validate_middleware.add_role,
-  try_catch(role_controller.store)
-);
-router.put("/:id", try_catch(role_controller.update));
-router.delete("/:id", try_catch(role_controller.destroy));
+router.get("/", [isLogin, isAdmin], try_catch(index));
 
-router.get("/title/:title", try_catch(role_controller.roleByTitle));
-router.get("/:id", try_catch(role_controller.roleById));
+router.post("/", [isLogin, isAdmin], add_role, try_catch(store));
+
+router.put("/:id", [isLogin, isAdmin], try_catch(update));
+
+router.delete("/:id", [isLogin, isAdmin], try_catch(destroy));
+
+router.get("/title/:title", [isLogin, isAdmin], try_catch(roleByTitle));
+
+router.get("/:id", [isLogin, isAdmin], try_catch(roleById));
 
 module.exports = router;
