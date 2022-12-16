@@ -1,4 +1,5 @@
 "use strict";
+const { number } = require("joi");
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class CourseLanding extends Model {
@@ -9,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      CourseLanding.belongsTo(models.User);
+      models.User.hasMany(CourseLanding);
     }
   }
   CourseLanding.init(
@@ -17,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
       },
 
+      userId: {
+        type: DataTypes.INTEGER,
+      },
       description: {
         type: DataTypes.TEXT,
         allowNull: false,

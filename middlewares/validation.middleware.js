@@ -154,3 +154,7 @@ exports.login = async (req, res, next) => {
     next();
   }
 };
+
+exports.landing = async (req, res, next) => {
+  const schema = {};
+};
