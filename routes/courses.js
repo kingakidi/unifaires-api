@@ -24,7 +24,7 @@ router.delete("/:id", destroy);
 
 // Course Landings
 router.get("/landing", getCourseLanding);
-router.post("/landing", postCourseLanding);
+router.post("/landing", landingValidate, postCourseLanding);
 
 router.get("/:id", single);
 

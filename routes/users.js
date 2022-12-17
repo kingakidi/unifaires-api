@@ -14,7 +14,7 @@ const try_catch = require("../middlewares/trycatch");
 const { isLogin, isAdmin } = require("../middlewares/auth.middlewares");
 
 router.get("/", [isLogin, isAdmin], try_catch(index));
-router.post("/", [isLogin, isAdmin], try_catch(store));
+router.post("/", signup, try_catch(store));
 
 router.put("/:id", [isLogin, isAdmin], try_catch(update));
 router.delete("/:id", [isLogin, isAdmin], try_catch(destroy));

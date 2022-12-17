@@ -46,4 +46,9 @@ exports.getCourseLanding = async function (req, res, next) {
     });
 };
 
-exports.postCourseLanding = async function (req, res, next) {};
+exports.postCourseLanding = async function (req, res, next) {
+  res.status(200).json({
+    status: true,
+    message: "working",
+  });
+};

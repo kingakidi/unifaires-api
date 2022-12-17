@@ -1,43 +1,47 @@
-const { Role } = require("../models");
+const { Role, User, Permission } = require("../models");
 const Validator = require("fastest-validator");
+const Joi = require("joi");
 const v = new Validator();
 
-function generateError(errors) {
-  let error = [];
-
-  errors.forEach((err) => {
-    error.push(err.message);
-  });
-
-  return error;
-}
 exports.signup = async (req, res, next) => {
   const schema = {
     fullname: { type: "string", optional: false, max: 100 },
     email: { type: "email", optional: false, max: 100 },
     password: { type: "string", optional: false, max: 255 },
+    permissionId: {
+      type: "string",
+      optional: false,
+      positive: true,
+      integer: true,
+    },
   };
 
-  let { fullname, email, password, imageUrl } = req.body;
-
-  const user = {
-    fullname: fullname,
-    email: email,
-    password: password,
-    imageUrl: imageUrl,
-  };
-
-  const error = v.validate(user, schema);
+  const error = v.validate(req.body, schema);
   // console.log(error.length);
   if (error.length)
-    return res.status(400).send({
+    return res.status(400).json({
       status: "failed",
       message: "validation failed",
       error: error,
       data: null,
     });
 
-  next();
+  // check if permission id is valid
+  await Permission.findOne({ where: { id: req.body.permissionId } })
+    .then((result) => {
+      if (!result)
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Permission Id",
+        });
+      next();
+    })
+    .catch((e) => {
+      return res.status(500).json({
+        success: false,
+        message: "Server Error",
+      });
+    });
 };
 
 exports.add_role = async (req, res, next) => {
@@ -52,16 +56,10 @@ exports.add_role = async (req, res, next) => {
     },
   };
 
-  const { title, description } = req.body;
-  const role = {
-    title,
-    description,
-  };
-
-  const error = v.validate(role, schema);
+  const error = await v.validate(req.body, schema);
 
   if (error.length)
-    return res.status(400).send({
+    return res.status(400).json({
       status: "failed",
       message: "validation failed",
       error: error,
@@ -93,16 +91,9 @@ exports.add_permissions = async (req, res, next) => {
     },
   };
 
-  const { title, description, meta, roleId } = req.body;
-  const permissions = {
-    title,
-    description,
-    meta,
-    roleId,
-  };
-  const error = v.validate(permissions, schema);
+  const error = await v.validate(req.body, schema);
   if (error.length > 0) {
-    return res.status(400).send({
+    return res.status(400).json({
       status: "failed",
       message: "validation failed",
       error: error,
@@ -110,9 +101,11 @@ exports.add_permissions = async (req, res, next) => {
     });
   } else {
     // Check if the roleId exist
-    let permissionIdCheck = await Role.findOne({ where: { id: roleId } });
+    let permissionIdCheck = await Role.findOne({
+      where: { id: req.body.roleId },
+    });
     if (!permissionIdCheck)
-      return res.status(400).send({
+      return res.status(400).json({
         status: "failed",
         message: "Invalid Role Id",
         error: true,
@@ -124,12 +117,6 @@ exports.add_permissions = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
-
-  const data = {
-    email,
-    password,
-  };
   const schema = {
     email: {
       type: "email",
@@ -142,10 +129,10 @@ exports.login = async (req, res, next) => {
     },
   };
 
-  const error = await v.validate(data, schema);
+  const error = await v.validate(req.body, schema);
 
   if (error.length > 0) {
-    return res.status(400).send({
+    return res.status(400).json({
       status: "failed",
       message: "validation failed",
       error: error,
@@ -155,6 +142,84 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.landing = async (req, res, next) => {
-  const schema = {};
+exports.landingValidate = async (req, res, next) => {
+  const schema = {
+    userId: {
+      type: "string",
+      optional: false,
+    },
+    title: {
+      type: "string",
+      optional: false,
+    },
+    image: {
+      type: "string",
+      optional: false,
+    },
+    video: {
+      type: "string",
+      optional: false,
+    },
+    description: {
+      type: "string",
+      optional: false,
+    },
+    organizationName: {
+      type: "string",
+      optional: false,
+    },
+    aboutOrganization: {
+      type: "string",
+      optional: false,
+    },
+    scope: {
+      type: "string",
+      optional: false,
+    },
+    requirement: {
+      type: "string",
+      optional: false,
+    },
+
+    target: {
+      type: "string",
+      optional: false,
+    },
+    lang: {
+      type: "string",
+      optional: false,
+    },
+    level: {
+      type: "string",
+      optional: false,
+    },
+  };
+
+  const Schema = Joi.object({
+    userId: Joi.number().positive().required(),
+    title: Joi.string().required(),
+    image: Joi.string().required(),
+    video: Joi.string().required(),
+    description: Joi.string().required(),
+    organizationName: Joi.string().required(),
+    aboutOrganization: Joi.string().required(),
+    scope: Joi.string().required(),
+    requirement: Joi.string().required(),
+
+    target: Joi.string().required(),
+    lang: Joi.string().required(),
+    level: Joi.string().required(),
+  });
+
+  const error = Schema.validate(req.body);
+  console.log(error.error);
+  if (error.error)
+    return res.status(400).json({
+      sucess: false,
+      message: "validation failed",
+      error: error.error,
+    });
+
+  // check course title exist for the user
+  next();
 };

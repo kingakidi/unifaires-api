@@ -15,7 +15,7 @@ const { isLogin, isAdmin } = require("../middlewares/auth.middlewares");
 
 router.get("/", [isLogin, isAdmin], try_catch(index));
 
-router.post("/", [isLogin, isAdmin], add_permissions, try_catch(store));
+router.post("/", add_permissions, try_catch(store));
 
 router.put("/:id", [isLogin, isAdmin], try_catch(update));
 
