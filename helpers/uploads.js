@@ -1,5 +1,3 @@
-const multer = require("multer");
-const upload = multer({ dest: "./upload" });
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 
@@ -14,44 +12,27 @@ const options = {
   use_filename: true,
   unique_filename: false,
   overwrite: true,
+  resource_type: "auto",
 };
 
-const uploadImage = async (path) => {
-  // Upload the image
-  const result = await cloudinary.uploader.upload(path, options);
-
-  const { secure_url, public_id } = result;
-
-  // remove the file from upload folder
+function removeLocalFile(path) {
   if (fs.existsSync(path)) {
     fs.unlinkSync(path);
   }
-};
+}
 
-const uploadVideo = async (path) => {
+const fileUpload = async (path) => {
   const result = await cloudinary.uploader.upload(path, options);
 
-  const { secure_url, public_id } = result;
-
-  // remove the file from upload folder
-  if (fs.existsSync(path)) {
-    fs.unlinkSync(path);
+  if (result) {
+    removeLocalFile(path);
+    return result;
   }
-};
 
-const uploadFile = async (path) => {
-  const result = await cloudinary.uploader.upload(path, options);
-
-  const { secure_url, public_id } = result;
-
-  // remove the file from upload folder
-  if (fs.existsSync(path)) {
-    fs.unlinkSync(path);
-  }
+  return false;
 };
 
 module.exports = {
-  uploadImage,
-  uploadVideo,
-  uploadFile,
+  fileUpload,
+  removeLocalFile,
 };
