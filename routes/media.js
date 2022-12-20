@@ -1,35 +1,34 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const upload = multer({ dest: "./upload" });
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_USERNAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
-  secure: true,
-});
 
 router.post("/", upload.single("media"), async function (req, res) {
-  console.log(req.file);
-  const options = {
-    use_filename: false,
-    unique_filename: true,
-    overwrite: true,
-  };
-
   try {
-    // Upload the image
-    const result = await cloudinary.uploader.upload(req.file.path, options);
+    if (!req.file)
+      return res.status(400).json({
+        success: false,
+        message: "No file selected",
+      });
 
-    const { secure_url, public_id } = result;
+    // check the file type
+    const imageTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+    const videoTypes = ["video/mp4", "video/wepm"];
+    const fileTypes = [""];
 
-    // remove the file from upload folder
-    if (fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    // call services based on the file type
+    if (imageTypes.includes(req.file.mimetype)) {
+      // call upload image helper
+
+      console.log("nice one");
+    } else if (videoTypes.includes(req.file.mimetype)) {
+      console.log("this is working");
+    } else if (fileTypes.includes(req.file.mimetype)) {
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid media file",
+      });
     }
+
     return res.status(201).json({
       success: true,
       message: "media upload successfully",
@@ -37,9 +36,14 @@ router.post("/", upload.single("media"), async function (req, res) {
     });
   } catch (error) {
     console.log(error.message);
+    // remove the file from upload folder
+    if (fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({
       success: false,
       message: "Something went wrong",
+      error: error.message,
     });
   }
 

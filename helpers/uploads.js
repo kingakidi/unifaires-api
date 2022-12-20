@@ -1,30 +1,57 @@
 const multer = require("multer");
-const cloudinary = require("cloudinary");
+const upload = multer({ dest: "./upload" });
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_USERNAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET_KEY,
+  secure: true,
 });
 
-/////////////////////////
-// Uploads an image file
-/////////////////////////
-const uploadImage = async (imagePath) => {
-  // Use the uploaded file's name as the asset's public ID and
-  // allow overwriting the asset with new versions
-  const options = {
-    use_filename: true,
-    unique_filename: false,
-    overwrite: true,
-  };
+const options = {
+  use_filename: true,
+  unique_filename: false,
+  overwrite: true,
+};
 
-  try {
-    // Upload the image
-    const result = await cloudinary.uploader.upload(imagePath, options);
-    console.log(result);
-    return result.public_id;
-  } catch (error) {
-    console.error(error);
+const uploadImage = async (path) => {
+  // Upload the image
+  const result = await cloudinary.uploader.upload(path, options);
+
+  const { secure_url, public_id } = result;
+
+  // remove the file from upload folder
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
   }
+};
+
+const uploadVideo = async (path) => {
+  const result = await cloudinary.uploader.upload(path, options);
+
+  const { secure_url, public_id } = result;
+
+  // remove the file from upload folder
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+  }
+};
+
+const uploadFile = async (path) => {
+  const result = await cloudinary.uploader.upload(path, options);
+
+  const { secure_url, public_id } = result;
+
+  // remove the file from upload folder
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+  }
+};
+
+module.exports = {
+  uploadImage,
+  uploadVideo,
+  uploadFile,
 };
