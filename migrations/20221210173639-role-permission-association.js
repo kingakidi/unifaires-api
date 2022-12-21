@@ -11,6 +11,8 @@ module.exports = {
         table: "Roles",
         field: "id",
       },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     });
   },
 

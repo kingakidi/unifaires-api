@@ -1,5 +1,9 @@
 const { User } = require("../models");
-const bcrypt = require("bcryptjs");
+const PermissionServices = require("../services/permission.service");
+const UsersServices = require("../services/users.services");
+
+const permissionServices = new PermissionServices();
+const userServices = new UsersServices();
 
 exports.index = async function (req, res, next) {
   let users = await User.findAll();
@@ -10,54 +14,36 @@ exports.index = async function (req, res, next) {
 };
 
 exports.store = async function (req, res, next) {
-  let { fullname, email, password, imageUrl, permissionId } = req.body;
+  let validPermission = await permissionServices.getPermission(
+    req.body.permissionId
+  );
 
-  const hashPassword = await bcrypt.hash(password, 10);
-  const user = {
-    fullname: fullname,
-    email: email,
-    password: hashPassword,
-    imageUrl: imageUrl,
-    permissionId: permissionId,
-  };
+  if (!validPermission)
+    return res.status(400).json({
+      success: false,
+      message: "invalid permission supply",
+      data: null,
+    });
 
   // check email
-  await User.findOne({ where: { email: email } }).then(async (result) => {
-    if (result) {
-      return res.status(409).send({
-        status: "failed",
-        message: "Email already exist",
-        data: null,
-      });
-    } else {
-      {
-        await User.create(user)
-          .then((result) => {
-            // trigger email event
+  let isEmail = await userServices.verifyEmail(req.body.email);
 
-            const { fullname, email, imageUrl, createdAt, updatedAt } = result;
-            res.status(201).send({
-              status: "success",
-              message: "User Created Successfully",
-              data: {
-                fullname,
-                email,
-                imageUrl,
-                createdAt,
-                updatedAt,
-              },
-            });
-          })
-          .catch((e) => {
-            res.status(500).send({
-              status: "failed",
-              message: e.message,
-              data: null,
-            });
-          });
-      }
-    }
-  });
+  if (!isEmail) {
+    return res.status(409).send({
+      status: "failed",
+      message: "Email already exist",
+      data: null,
+    });
+  } else {
+    // register user
+    const userData = await userServices.createUser(req);
+
+    res.status(201).send({
+      status: "success",
+      message: "User Created Successfully",
+      data: userData,
+    });
+  }
 };
 
 exports.update = async function (req, res, next) {

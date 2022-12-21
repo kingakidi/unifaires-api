@@ -27,7 +27,7 @@ module.exports = {
         allowNull: false,
       },
 
-      aboutOrganizaiton: {
+      aboutOrganization: {
         type: Sequelize.TEXT,
         allowNull: false,
       },

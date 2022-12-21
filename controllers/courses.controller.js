@@ -47,8 +47,28 @@ exports.getCourseLanding = async function (req, res, next) {
 };
 
 exports.postCourseLanding = async function (req, res, next) {
-  res.status(200).json({
-    status: true,
-    message: "working",
-  });
+  // call course landing services
+  try {
+    const data = ({
+      userId,
+      title,
+      image,
+      video,
+      description,
+      organizationName,
+      aboutOrganization,
+      scope,
+      requirement,
+      target,
+      lang,
+      level,
+    } = req.body);
+
+    let course = await CourseLanding.create(data).then((result) => {
+      console.log(result);
+    });
+    res.send(course);
+  } catch (error) {
+    next(error);
+  }
 };

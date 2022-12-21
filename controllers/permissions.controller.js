@@ -10,6 +10,18 @@ exports.index = async function (req, res, next) {
   });
 };
 exports.store = async function (req, res, next) {
+  // check if permission already exist
+  let isPermission = await permission.getPermission(req.body.permissionId);
+
+  if (isPermission)
+    return res.status(400).json({
+      success: false,
+      message: "validation failed",
+      error: error.error.details,
+      data: null,
+    });
+
+  // add permission
   let { title, meta, description, roleId } = req.body;
   let data = {
     title,

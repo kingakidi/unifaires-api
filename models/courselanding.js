@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
-      aboutOrganizaiton: {
+      aboutOrganization: {
         type: DataTypes.TEXT,
         allowNull: false,
       },

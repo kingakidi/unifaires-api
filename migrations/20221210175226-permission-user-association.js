@@ -11,6 +11,8 @@ module.exports = {
         table: "Permissions",
         field: "id",
       },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     });
   },
 

@@ -3,44 +3,26 @@ const Validator = require("fastest-validator");
 const Joi = require("joi");
 const v = new Validator();
 
-exports.signup = async (req, res, next) => {
-  const schema = {
-    fullname: { type: "string", optional: false, max: 100 },
-    email: { type: "email", optional: false, max: 100 },
-    password: { type: "string", optional: false, max: 255 },
-    permissionId: {
-      type: "string",
-      optional: false,
-      positive: true,
-      integer: true,
-    },
-  };
+const PermissionServices = require("../services/permission.service");
 
-  const error = v.validate(req.body, schema);
+const permission = new PermissionServices();
+
+exports.signup = async (req, res, next) => {
+  const schema = Joi.object({
+    fullname: Joi.string().required(),
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+    permissionId: Joi.number().required(),
+  });
+
+  const error = schema.validate(req.body);
   // console.log(error.length);
-  if (error.length)
+  if (error.error)
     return res.status(400).json({
       status: "failed",
       message: "validation failed",
-      error: error,
+      error: error.error.details,
       data: null,
-    });
-
-  // check if permission id is valid
-  await Permission.findOne({ where: { id: req.body.permissionId } })
-    .then((result) => {
-      if (!result)
-        return res.status(400).json({
-          success: false,
-          message: "Invalid Permission Id",
-        });
-      next();
-    })
-    .catch((e) => {
-      return res.status(500).json({
-        success: false,
-        message: "Server Error",
-      });
     });
 };
 
@@ -198,8 +180,8 @@ exports.landingValidate = async (req, res, next) => {
   const Schema = Joi.object({
     userId: Joi.number().positive().required(),
     title: Joi.string().required(),
-    image: Joi.string().required(),
-    video: Joi.string().required(),
+    image: Joi.string().uri().required(),
+    video: Joi.string().uri().required(),
     description: Joi.string().required(),
     organizationName: Joi.string().required(),
     aboutOrganization: Joi.string().required(),
@@ -212,13 +194,14 @@ exports.landingValidate = async (req, res, next) => {
   });
 
   const error = Schema.validate(req.body);
-  console.log(error.error);
-  if (error.error)
+
+  if (error.error) {
     return res.status(400).json({
       sucess: false,
       message: "validation failed",
-      error: error.error,
+      error: error.error.details,
     });
+  }
 
   // check course title exist for the user
   next();

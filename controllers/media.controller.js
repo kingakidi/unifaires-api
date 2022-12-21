@@ -1,15 +1,16 @@
 const { fileUpload, removeLocalFile } = require("../helpers/uploads");
 
-exports.store = async (req, res) => {
-  const fileTypes = [
-    "image/png",
-    "image/jpeg",
-    "image/jpg",
-    "image/webp",
-    "video/mp4",
-    "video/wepm",
-  ];
+const fileTypes = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "video/mp4",
+  "video/wepm",
+];
 
+exports.index = async (req, res) => {};
+exports.store = async (req, res) => {
   try {
     if (req.file) {
       // call services based on the file type
@@ -53,3 +54,7 @@ exports.store = async (req, res) => {
     });
   }
 };
+
+exports.update = async (req, res) => {};
+
+exports.destroy = async (req, res) => {};
