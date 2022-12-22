@@ -1,8 +1,11 @@
 const { Role } = require("../models");
+const RoleServices = require("../services/role.service");
 
-// Validations and Authentication middleware
+const roleService = new RoleServices();
+
 exports.index = async function (req, res, next) {
-  let roles = await Role.findAll();
+  let roles = await roleService.getAll();
+
   return res.status(200).send({
     message: "Roles Fetch Successfully",
     data: roles,
@@ -11,28 +14,22 @@ exports.index = async function (req, res, next) {
 exports.update = async function (req, res, next) {
   // Validate and check if the roles have already exist
 
-  let { id } = req.params;
-  let { title, description } = req.body;
-  const data = {
-    title,
-    description,
-  };
-
   // check if the role actually exist
-  const role = await Role.findOne({ where: { id: id } });
+  const role = await roleService.getRoleById(id);
   if (role) {
-    await Role.update(data, { where: { id: id } }).then((result) => {
+    let update = await roleService.update(req);
+
+    if (update)
       return res.status(200).send({
-        status: "success",
+        success: true,
         message: "Role updated successfully",
       });
+  } else {
+    return res.status(400).send({
+      success: false,
+      message: "Invalid role id",
     });
   }
-
-  return res.status(400).send({
-    status: "failed",
-    message: "Invalid role id",
-  });
 };
 
 exports.store = async function (req, res, next) {
@@ -51,13 +48,13 @@ exports.store = async function (req, res, next) {
   if (!titleCheck)
     return await Role.create(data).then((result) => {
       return res.status(201).send({
-        status: "success",
+        success: true,
         message: "Role Created Successfully",
         data: result,
       });
     });
   return res.status(400).send({
-    status: "failed",
+    success: false,
     message: "Role already exist",
     data: null,
   });
@@ -70,14 +67,14 @@ exports.destroy = async function (req, res, next) {
   if (role) {
     return await role.destroy().then((result) => {
       return res.status(204).send({
-        status: "success",
+        success: true,
         message: "Role deleted successfully",
         data: null,
       });
     });
   }
   return res.status(400).send({
-    status: "failed",
+    success: false,
     message: "Invalid Role",
   });
 };
@@ -87,13 +84,13 @@ exports.roleById = async function (req, res, next) {
   await Role.findOne({ where: { id: id } }).then((result) => {
     if (result)
       return res.status(200).send({
-        status: "success",
+        success: true,
         message: "Role fetch successfully",
         data: result,
       });
 
     return res.status(200).send({
-      status: "success",
+      success: true,
       message: "Roles does not exit",
       data: null,
     });
@@ -105,13 +102,13 @@ exports.roleByTitle = async function (req, res, next) {
   await Role.findOne({ where: { title: title } }).then((result) => {
     if (result)
       return res.status(200).send({
-        status: "success",
+        success: true,
         message: "Roles Fetch successfully",
         data: result,
       });
 
     return res.status(200).send({
-      status: "success",
+      success: true,
       message: "Roles does not exit",
       data: null,
     });

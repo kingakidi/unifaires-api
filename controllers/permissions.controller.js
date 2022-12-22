@@ -2,20 +2,21 @@ const { Permission } = require("../models");
 const RoleServices = require("../services/role.service");
 const PermissionServices = require("../services/permission.service");
 
-const roleServices = new RoleServices();
-const permissionServices = new PermissionServices();
+const roleService = new RoleServices();
+const permissionService = new PermissionServices();
+
 exports.index = async function (req, res, next) {
-  let permissions = await permissionServices.getAll();
+  let permissions = await permissionService.getAll();
 
   return res.status(200).send({
-    status: "success",
+    success: true,
     message: "Permissions fetch successfully",
     data: permissions,
   });
 };
 exports.store = async function (req, res, next) {
   // check if permission already exist
-  let isRole = await roleServices.getRole(req.body.roleId);
+  let isRole = await roleService.getRole(req.body.roleId);
 
   if (!isRole)
     return res.status(400).json({
@@ -25,7 +26,7 @@ exports.store = async function (req, res, next) {
     });
 
   // check if permission already exist
-  const isPermission = await permissionServices.getPermissionTitle(
+  const isPermission = await permissionService.getPermissionTitle(
     req.body.title
   );
 
@@ -37,7 +38,7 @@ exports.store = async function (req, res, next) {
   } else {
     // add permission
 
-    let resultData = await permissionServices.createPermission(req);
+    let resultData = await permissionService.createPermission(req);
 
     if (resultData)
       return res.status(201).send({
@@ -47,21 +48,22 @@ exports.store = async function (req, res, next) {
       });
   }
 };
+
 exports.update = async function (req, res) {};
 exports.destroy = async function (req, res) {};
 
 exports.getById = async function (req, res, next) {
   let { id } = req.params;
-  console.log(id);
-  let permission = await Permission.findOne({ where: { id: id } });
+
+  let permission = await permissionService.getPermission(id);
   if (permission)
     return res.status(200).send({
-      status: "success",
+      success: true,
       message: "Permission fetch successfully",
       data: permission,
     });
   return res.status(400).send({
-    status: "failed",
+    success: false,
     message: "Invalid permision",
     data: null,
   });
