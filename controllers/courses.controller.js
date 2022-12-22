@@ -49,25 +49,19 @@ exports.getCourseLanding = async function (req, res, next) {
 exports.postCourseLanding = async function (req, res, next) {
   // call course landing services
   try {
-    const data = ({
-      userId,
-      title,
+    const { image, video, ...data } = req.body;
+    data.meta = JSON.stringify({
       image,
       video,
-      description,
-      organizationName,
-      aboutOrganization,
-      scope,
-      requirement,
-      target,
-      lang,
-      level,
-    } = req.body);
-
-    let course = await CourseLanding.create(data).then((result) => {
-      console.log(result);
     });
-    res.send(course);
+
+    await CourseLanding.create(data).then((result) => {
+      res.status(201).send({
+        success: true,
+        message: "created successfully",
+        data: result,
+      });
+    });
   } catch (error) {
     next(error);
   }
