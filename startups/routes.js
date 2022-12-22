@@ -14,9 +14,10 @@ module.exports = function (app) {
   app.use("/media", media);
 
   app.use(function (err, req, res, next) {
+    console.log(err);
     return res.status(500).send({
       status: "Server Error",
-      message: err.message,
+      message: err,
     });
   });
 };

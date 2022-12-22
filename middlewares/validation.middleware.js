@@ -24,6 +24,7 @@ exports.signup = async (req, res, next) => {
       error: error.error.details,
       data: null,
     });
+  next();
 };
 
 exports.add_role = async (req, res, next) => {
@@ -52,33 +53,22 @@ exports.add_role = async (req, res, next) => {
 };
 
 exports.add_permissions = async (req, res, next) => {
-  const schema = {
-    title: {
-      type: "string",
-      optional: false,
-    },
-    description: {
-      type: "string",
-      optional: true,
-    },
-    meta: {
-      type: "string",
-      optional: false,
-    },
-    roleId: {
-      type: "string",
-      optional: false,
-      positive: true,
-      integer: true,
-    },
-  };
+  const schema = Joi.object({
+    title: Joi.string().required(),
 
-  const error = await v.validate(req.body, schema);
-  if (error.length > 0) {
+    description: Joi.string(),
+
+    meta: Joi.string().required(),
+
+    roleId: Joi.number().required(),
+  });
+
+  const error = schema.validate(req.body);
+  if (error.error) {
     return res.status(400).json({
       status: "failed",
       message: "validation failed",
-      error: error,
+      error: error.error.details,
       data: null,
     });
   } else {
@@ -86,6 +76,7 @@ exports.add_permissions = async (req, res, next) => {
     let permissionIdCheck = await Role.findOne({
       where: { id: req.body.roleId },
     });
+
     if (!permissionIdCheck)
       return res.status(400).json({
         status: "failed",

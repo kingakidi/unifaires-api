@@ -1,7 +1,11 @@
 const { Permission } = require("../models");
+const RoleServices = require("../services/role.service");
+const PermissionServices = require("../services/permission.service");
 
+const roleServices = new RoleServices();
+const permissionServices = new PermissionServices();
 exports.index = async function (req, res, next) {
-  let permissions = await Permission.findAll();
+  let permissions = await permissionServices.getAll();
 
   return res.status(200).send({
     status: "success",
@@ -11,32 +15,37 @@ exports.index = async function (req, res, next) {
 };
 exports.store = async function (req, res, next) {
   // check if permission already exist
-  let isPermission = await permission.getPermission(req.body.permissionId);
+  let isRole = await roleServices.getRole(req.body.roleId);
 
-  if (isPermission)
+  if (!isRole)
     return res.status(400).json({
       success: false,
-      message: "validation failed",
-      error: error.error.details,
+      message: "Invalid Role Id",
       data: null,
     });
 
-  // add permission
-  let { title, meta, description, roleId } = req.body;
-  let data = {
-    title,
-    meta,
-    description,
-    roleId: roleId,
-  };
+  // check if permission already exist
+  const isPermission = await permissionServices.getPermissionTitle(
+    req.body.title
+  );
 
-  await Permission.create(data).then((result) => {
-    return res.status(201).send({
-      status: "success",
-      message: "Permission created successfully",
-      data: result,
+  if (isPermission) {
+    return res.status(400).send({
+      success: false,
+      message: `${req.body.title} Permission already exist`,
     });
-  });
+  } else {
+    // add permission
+
+    let resultData = await permissionServices.createPermission(req);
+
+    if (resultData)
+      return res.status(201).send({
+        success: true,
+        message: "permission created successfully",
+        data: resultData,
+      });
+  }
 };
 exports.update = async function (req, res) {};
 exports.destroy = async function (req, res) {};

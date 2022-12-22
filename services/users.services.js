@@ -2,6 +2,14 @@ const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 
 module.exports = class UsersServices {
+  async getAll() {
+    return await User.findAll();
+  }
+
+  async getById(id) {
+    return;
+  }
+
   async createUser(req) {
     let { fullname, email, password, imageUrl, permissionId } = req.body;
 
@@ -17,9 +25,13 @@ module.exports = class UsersServices {
 
     let result = await User.create(user);
 
-    const data = ({ fullname, email, imageUrl, createdAt, updatedAt } = result);
-
-    return data;
+    return {
+      fullname: result.fullname,
+      email: result.email,
+      imageUrl: result.imageUrl,
+      updatedAt: result.updatedAt,
+      createdAt: result.createdAt,
+    };
   }
 
   async verifyEmail(email) {

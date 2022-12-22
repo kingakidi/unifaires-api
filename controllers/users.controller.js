@@ -6,7 +6,7 @@ const permissionServices = new PermissionServices();
 const userServices = new UsersServices();
 
 exports.index = async function (req, res, next) {
-  let users = await User.findAll();
+  let users = await userServices.getAll();
   return res.status(200).json({
     message: "success",
     data: users,
@@ -28,8 +28,8 @@ exports.store = async function (req, res, next) {
   // check email
   let isEmail = await userServices.verifyEmail(req.body.email);
 
-  if (!isEmail) {
-    return res.status(409).send({
+  if (isEmail) {
+    return res.status(400).send({
       status: "failed",
       message: "Email already exist",
       data: null,
