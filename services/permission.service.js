@@ -1,6 +1,6 @@
 const { Permission } = require("../models");
 
-module.exports = class PermissionsServices {
+class PermissionsServices {
   async getAll() {
     return Permission.findAll();
   }
@@ -28,4 +28,6 @@ module.exports = class PermissionsServices {
       where: { title },
     });
   }
-};
+}
+
+module.exports = new PermissionsServices();

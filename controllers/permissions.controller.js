@@ -1,9 +1,5 @@
-const { Permission } = require("../models");
-const RoleServices = require("../services/role.service");
-const PermissionServices = require("../services/permission.service");
-
-const roleService = new RoleServices();
-const permissionService = new PermissionServices();
+const roleService = require("../services/role.service");
+const permissionService = require("../services/permission.service");
 
 exports.index = async function (req, res, next) {
   let permissions = await permissionService.getAll();

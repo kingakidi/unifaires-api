@@ -1,7 +1,5 @@
 const { Role } = require("../models");
-const RoleServices = require("../services/role.service");
-
-const roleService = new RoleServices();
+const roleService = require("../services/role.service");
 
 exports.index = async function (req, res, next) {
   let roles = await roleService.getAll();

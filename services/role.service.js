@@ -1,6 +1,6 @@
 const { Role } = require("../models");
 
-module.exports = class RoleServices {
+class RoleServices {
   async getRoleById(id) {
     return await Role.findOne({
       where: { id },
@@ -16,4 +16,6 @@ module.exports = class RoleServices {
 
     Role.update(data, { where: { id: id } });
   }
-};
+}
+
+module.exports = new RoleServices();

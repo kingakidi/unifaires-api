@@ -1,11 +1,4 @@
-const { Role, User, Permission } = require("../models");
-const Validator = require("fastest-validator");
 const Joi = require("joi");
-const v = new Validator();
-
-const PermissionServices = require("../services/permission.service");
-
-const permission = new PermissionServices();
 
 exports.signup = async (req, res, next) => {
   const schema = Joi.object({

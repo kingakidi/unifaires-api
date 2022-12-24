@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 
-module.exports = class UsersServices {
+class UsersServices {
   async getAll() {
     return await User.findAll();
   }
@@ -37,4 +37,6 @@ module.exports = class UsersServices {
   async verifyEmail(email) {
     return await User.findOne({ where: { email: email } });
   }
-};
+}
+
+module.exports = new UsersServices();

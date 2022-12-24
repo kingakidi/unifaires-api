@@ -1,9 +1,7 @@
 const { User } = require("../models");
-const PermissionServices = require("../services/permission.service");
-const UsersServices = require("../services/users.services");
+const permissionServices = require("../services/permission.service");
 
-const permissionServices = new PermissionServices();
-const userServices = new UsersServices();
+const userServices = require("../services/users.services");
 
 exports.index = async function (req, res, next) {
   let users = await userServices.getAll();
