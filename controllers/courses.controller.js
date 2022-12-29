@@ -1,4 +1,4 @@
-const { CourseLanding } = require("../models");
+const courseService = require("../services/course.service");
 
 exports.index = async function (req, res) {
   return res.status(200).send({
@@ -32,9 +32,7 @@ exports.single = async function (req, res, next) {
 
 // Course Landing
 exports.getCourseLanding = async function (req, res, next) {
-  const courseLanding = await CourseLanding.findAll().then((result) => {
-    return result;
-  });
+  const courseLanding = await courseService.getCourseLanding();
 
   if (courseLanding)
     return res.status(200).send({
@@ -49,19 +47,14 @@ exports.getCourseLanding = async function (req, res, next) {
 exports.postCourseLanding = async function (req, res, next) {
   // call course landing services
   try {
-    const { image, video, ...data } = req.body;
-    data.meta = JSON.stringify({
-      image,
-      video,
-    });
+    let postCourse = await courseService.createCourseLanding(req);
 
-    await CourseLanding.create(data).then((result) => {
-      res.status(201).send({
+    if (postCourse)
+      return res.status(201).send({
         success: true,
         message: "created successfully",
         data: result,
       });
-    });
   } catch (error) {
     next(error);
   }

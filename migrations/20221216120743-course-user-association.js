@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    queryInterface.addConstraint("CourseLandings", {
+    queryInterface.addConstraint("Courses", {
       fields: ["userId"],
       type: "foreign key",
       name: "course-landing-users",
@@ -15,7 +15,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    queryInterface.removeConstraint("CourseLandings", {
+    queryInterface.removeConstraint("Courses", {
       fields: ["userId"],
       type: "foreign key",
       name: "course-landing-users",

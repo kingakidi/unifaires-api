@@ -2,7 +2,7 @@
 const { number } = require("joi");
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class CourseLanding extends Model {
+  class Course extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      CourseLanding.belongsTo(models.User);
-      models.User.hasMany(CourseLanding);
+      Course.belongsTo(models.User);
+      models.User.hasMany(Course);
     }
   }
-  CourseLanding.init(
+  Course.init(
     {
       meta: {
         type: DataTypes.TEXT,
@@ -63,8 +63,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "CourseLanding",
+      modelName: "Course",
     }
   );
-  return CourseLanding;
+  return Course;
 };
