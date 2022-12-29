@@ -5,6 +5,7 @@ module.exports = function (app) {
   const auth = require("../routes/auth");
   const courses = require("../routes/courses");
   const media = require("../routes/media");
+  const message = require("../routes/message");
 
   app.use("/roles", roles);
   app.use("/permissions", permissions);
@@ -12,6 +13,7 @@ module.exports = function (app) {
   app.use("/auth", auth);
   app.use("/courses", courses);
   app.use("/media", media);
+  app.use("/message", message);
 
   app.use(function (err, req, res, next) {
     console.log(err);
